@@ -64,7 +64,7 @@ namespace hooks::client_mode {
 		globals->m_original_angle = cmd->m_viewangles;
 
 		if (globals->m_weapon != nullptr) {
-			lua::user_cmd_callback(STR("pre_move"), cmd);
+			//lua::user_cmd_callback(STR("pre_move"), cmd);
 
 			if (!interfaces::game_rules->is_valve_ds())
 				cmd->m_buttons.add(in_bullrush);
@@ -83,7 +83,7 @@ namespace hooks::client_mode {
 			globals->m_weapon_spread = globals->m_weapon->get_spread();
 			globals->m_eye_position = hvh::aimbot->get_shoot_position();
 
-			lua::user_cmd_callback(STR("create_move"), cmd);
+			//lua::user_cmd_callback(STR("create_move"), cmd);
 
 			projectiles->on_create_move(cmd);
 			players->on_create_move();
@@ -206,7 +206,7 @@ namespace hooks::client_mode {
 
 			engine_prediction->end(cmd);
 
-			lua::user_cmd_callback(STR("post_move"), cmd);
+			//lua::user_cmd_callback(STR("post_move"), cmd);
 		}
 
 		return false;

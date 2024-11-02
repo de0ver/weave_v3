@@ -170,7 +170,7 @@ namespace hvh {
 		std::optional<incheat_vars::antiaim_settings_t> m_settings{};
 		bool can_work(sdk::user_cmd_t* cmd);
 		std::optional<float> get_at_target_yaw(bool only_on_screen);
-		void setup_settings(incheat_vars::antiaim_settings_t& set, int& side);
+		//void setup_settings(incheat_vars::antiaim_settings_t& set, int& side);
 		void apply(sdk::user_cmd_t* cmd);
 	};
 

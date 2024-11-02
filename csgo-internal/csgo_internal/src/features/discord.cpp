@@ -1,3 +1,4 @@
+/*
 #include "discord.hpp"
 #include "../base_includes.hpp"
 
@@ -24,3 +25,4 @@ void discord::update() {
 }
 
 #endif
+*/

@@ -797,10 +797,10 @@ void players_t::update_local_player(user_cmd_t* cmd) {
 		should_update = true;
 	}
 
-	//if (exploits->m_breaking_lc)
-	//	should_update = false;
+	if (exploits->m_breaking_lc && settings->movement.anim_changers.at(0))
+		should_update = false;
 
-	lua::callback(STR("update_clientside_animations"));
+	//lua::callback(STR("update_clientside_animations"));
 
 	players->is_updating(globals->m_local) = true;
 	animstate->update(current_angle.y, current_angle.x);

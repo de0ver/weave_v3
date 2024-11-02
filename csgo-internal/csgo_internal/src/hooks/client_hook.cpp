@@ -216,7 +216,7 @@ namespace hooks::client {
 				if (render::can_render) {
 					render::begin();
 					if (render::in_fsn) {
-						lua::callback(STR("render"));
+						//lua::callback(STR("render"));
 						render::end();
 					}
 				}
@@ -261,7 +261,7 @@ namespace hooks::client {
 				if (render::can_render) {
 					render::begin();
 					if (render::in_fsn) {
-						lua::callback(STR("render"));
+						//lua::callback(STR("render"));
 						render::end();
 					}
 				}

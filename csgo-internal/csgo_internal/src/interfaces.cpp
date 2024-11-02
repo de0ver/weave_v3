@@ -11,10 +11,10 @@ namespace interfaces {
 			return;
 
 		engine = utils::find_interface(STRSC("engine.dll"), STRSC("VEngineClient014")).as<engine_client_t*>();
-		if (engine->get_engine_build_number() != XOR32S(disp::engine_build_number)) {
+		/*if (engine->get_engine_build_number() != XOR32S(disp::engine_build_number)) {
 			MessageBoxA(0, STRC("Cheat doesn't updated to last game version! Please wait until update."), STRC("Error"), MB_ICONERROR | MB_SETFOREGROUND);
 			exit(0);
-		}
+		}*/
 
 		client = utils::find_interface(STRSC("client.dll"), STRSC("VClient018")).as<client_t*>();
 		entity_list = utils::find_interface(STRSC("client.dll"), STRSC("VClientEntityList003")).as<entity_list_t*>();

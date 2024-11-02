@@ -48,7 +48,7 @@ namespace hooks::v_panel {
 		static bool once = false;
 		if (!once) {
 			verdana = interfaces::surface->create_font();
-			interfaces::surface->set_font_glyph_set(verdana, STRSC("Tahoma"), 18, FW_SEMIBOLD, NULL, NULL, /* FONTFLAG_OUTLINE */ 0x200, 500, 700);
+			interfaces::surface->set_font_glyph_set(verdana, STRSC("Verdana"), 18, FW_SEMIBOLD, NULL, NULL, /* FONTFLAG_OUTLINE */ 0x200, 500, 700);
 			once = true;
 		}
 

@@ -65,7 +65,7 @@ namespace incheat_vars {
 								case HASH("g"): color_ptr->get().g() = clr->get<uint8_t>(); break;
 								case HASH("b"): color_ptr->get().b() = clr->get<uint8_t>(); break;
 								case HASH("a"): color_ptr->get().a() = clr->get<uint8_t>(); break;
-							}							   
+							}
 						}
 					} else {
 						if (var.key().substr(0, 7) == STRS("hotkey_")) {
@@ -146,7 +146,7 @@ namespace incheat_vars {
 		return { out_string.data(), out_string.data() + out_string.length() };
 	}
 
-#define __USERNAME__ STRS("admin")
+#define __USERNAME__ STRS("de0ver")
 
 #define __CFG_VERSION__ XOR32S(1)
 #define __CFG_PATH__ dformat(STRS("weave\\settings\\{}"), __USERNAME__)
@@ -341,7 +341,6 @@ namespace incheat_vars {
 
 		VARS_ADD_FLAGS(exploits.defensive_flags, 0);
 		VARS_ADD_BOOL(exploits.immediate_teleport, 0);
-		VARS_ADD_FLAGS(exploits.defensive_flags, 0);
 	}
 
 	void settings_t::init_visuals() {
@@ -475,6 +474,7 @@ namespace incheat_vars {
 
 		VARS_ADD_BOOL(movement.fast_stop, false);
 		VARS_ADD_INT(movement.leg_movement, false);
+		VARS_ADD_FLAGS(movement.anim_changers, 0b0);
 		VARS_ADD_BOOL(movement.peek_assist_retreat_on_key, false);
 
 		VARS_ADD_COLOR(movement.peek_assist_colors[0], 255, 35, 35, 255);
@@ -494,6 +494,8 @@ namespace incheat_vars {
 		VARS_ADD_INT(misc.autobuy.main, 0);
 		VARS_ADD_INT(misc.autobuy.pistol, 0);
 		VARS_ADD_FLAGS(misc.autobuy.additional, 0);
+
+		VARS_ADD_INT(configs.config_number, 0);
 	}
 
 	void settings_t::init_skins() {

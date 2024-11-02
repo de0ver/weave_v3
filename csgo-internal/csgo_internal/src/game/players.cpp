@@ -196,11 +196,7 @@ void players_t::on_render_start() {
 	globals->m_local_alive = globals->m_local->is_alive();
 	globals->m_local_hp = globals->m_local_alive ? globals->m_local->health() : 0;
 
-#ifdef _DEBUG
-	globals->m_local->personal_data_public_level() = 44440;
-#else
-	globals->m_local->personal_data_public_level() = XOR32(4444);
-#endif
+	globals->m_local->personal_data_public_level() = XOR32(44440);
 
 	if (globals->m_local_alive) {
 		if (!hvh::exploits->m_charging)
@@ -437,6 +433,7 @@ void players_t::on_net_update_end() {
 	}
 }
 
+/*
 STFI bool is_playing_on_this_server(int user_id) {
 	const auto& users = network::online;
 	if (!users.has_value())
@@ -455,6 +452,7 @@ STFI bool is_playing_on_this_server(int user_id) {
 
 	return false;
 }
+*/
 
 void players_t::on_voice_data_received(svc_msg_voice_data_t* msg) {
 	voice_communication_data_t voice_data = msg->data();
@@ -478,7 +476,7 @@ void players_t::on_voice_data_received(svc_msg_voice_data_t* msg) {
 	if (sender_id >= 0 && sender_id <= 63) {
 		auto& sender = players->m_shared[sender_id];
 
-		sender.m_verified = is_playing_on_this_server(data.m_user_info.m_id);
+		sender.m_verified = true;  //is_playing_on_this_server(data.m_user_info.m_id);
 
 		if (!sender.m_verified) {
 			sender.m_friend_cheat = 0;
@@ -489,20 +487,14 @@ void players_t::on_voice_data_received(svc_msg_voice_data_t* msg) {
 		const auto old_id = sender.m_friend_cheat;
 
 		switch (voice_channel_t::get_id(data.m_id)) {
-			case voice_channel_t::weave_id:
-				sender.m_friend_cheat = 1;
-				break;
-			case voice_channel_t::boss_id:
-				sender.m_friend_cheat = 3;
-				break;
-				//case voice_channel_t::airflow_id: sender.m_friend_cheat = 2; break;
-				//case voice_channel_t::airflow_boss_id: sender.m_friend_cheat = 2; break;
-				//case voice_channel_t::furcore_id: sender.m_friend_cheat = 4; break;
-				//case voice_channel_t::floridahook_id: sender.m_friend_cheat = 5; break;
-				//case voice_channel_t::karnazity: sender.m_friend_cheat = 6; break;
-			default:
-				sender.m_friend_cheat = 0;
-				break;
+			case voice_channel_t::weave_id: sender.m_friend_cheat = 1;break;
+			case voice_channel_t::boss_id: sender.m_friend_cheat = 3;break;
+			case voice_channel_t::airflow_id: sender.m_friend_cheat = 2; break;
+			case voice_channel_t::airflow_boss_id: sender.m_friend_cheat = 2; break;
+			case voice_channel_t::furcore_id: sender.m_friend_cheat = 4; break;
+			case voice_channel_t::floridahook_id: sender.m_friend_cheat = 5; break;
+			case voice_channel_t::karnazity: sender.m_friend_cheat = 6; break;
+			default: sender.m_friend_cheat = 0; break;
 		}
 
 		if (sender.m_friend_cheat != 0) {

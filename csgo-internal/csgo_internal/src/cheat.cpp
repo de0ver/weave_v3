@@ -195,8 +195,8 @@ W::::::W                           W::::::W
 		skin_changer->parse();
 		PUSH_LOG(STRSC("skins parsed\n"));
 #ifndef _DEBUG
-		discord::init();
-		discord::update();
+		//discord::init();
+		//discord::update();
 		PUSH_LOG(STRSC("discord-rpc\n"));
 #endif
 	}

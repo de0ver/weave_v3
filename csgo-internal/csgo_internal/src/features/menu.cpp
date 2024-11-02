@@ -3,12 +3,16 @@
 #include "misc.hpp"
 #include "../interfaces.hpp"
 #include "../../deps/weave-gui/include.hpp"
+#include "../globals.hpp"
+#include "hvh/hvh.hpp"
 
 using namespace gui;
 
 namespace menu {
+
 	static void welcome_tab() {
 		ImGui::Text(STRC("Welcome!\nCheat has been loaded and ready to use\n\nBuild date: %s %s"), STRC(__DATE__), STRC(__TIME__));
+		ImGui::Text(STRC("Author: de0ver"));
 	}
 
 	static void ragebot_tab() {
@@ -22,6 +26,7 @@ namespace menu {
 			if (settings->ragebot.enable) {
 				ImGui::Checkbox(STRC("Auto-fire"), &settings->ragebot.autofire);
 				ImGui::Checkbox(STRC("Silent"), &settings->ragebot.silent);
+				slider_int(STR("Computing limit"), &settings->ragebot.computing_limit, 0, 2, settings->ragebot.computing_limit == 0 ? STR("Off") : STR("%d"));
 #ifdef __NO_OBF
 				ImGui::Checkbox(STRC("Multi-threading"), &settings->multithreading);
 #endif
@@ -87,7 +92,10 @@ namespace menu {
 
 				if (group_tab == 0 || settings->ragebot.weapons[group_tab].override_default || set->override_default) {
 					ImGui::Checkbox(STRC("Quick stop"), &set->quick_stop);
-					ImGui::Checkbox(STRC("Automatic scope"), &set->autoscope);
+
+					if (group_tab == 1 || group_tab == 2) {
+						ImGui::Checkbox(STRC("Automatic scope"), &set->autoscope);
+					}
 					//ImGui::Checkbox(STRC("Visible only"), &set->visible_only);
 
 					multicombo(STR("Hitboxes"), &set->hitboxes, {
@@ -151,30 +159,39 @@ namespace menu {
 		{
 			static int trigger_tab = 0;
 			ImGui::Checkbox(STRC("Enable"), &settings->antiaim.enable);
-			multicombo(STR("Defensive options"), &settings->exploits.defensive_flags, { STR("On ground"), STR("In air"), STR("Safe peek"), STR("Anti-aim") });
+			multicombo(STR("Defensive options"), &settings->exploits.defensive_flags, { STR("On ground"), STR("In air"), STR("Anti aim"), STR("Safe peek") });
 			ImGui::Checkbox(STRC("Immediate teleport"), &settings->exploits.immediate_teleport);
 
 			if (settings->antiaim.enable) {
-				combo(STR("Trigger"), &trigger_tab, { STR("Default"), STR("Standing"), STR("Moving"), STR("Jumping"), STR("Slow walking"), STR("Crouching") });
+				combo(STR("Trigger"), &trigger_tab, { STR("Default"), STR("Standing"), STR("Moving"), STR("Jumping"), STR("Slow walking"), STR("Crouching"), STR("Defensive"), STR("On use") });
 				auto set = &settings->antiaim.triggers[trigger_tab];
 				if (trigger_tab > 0)
 					ImGui::Checkbox(STRC("Override default"), &set->override_default);
 
 				if (trigger_tab == 0 || set->override_default) {
+					combo(STR("Override pitch"), &set->pitch, { STR("Down"), STR("Random"), STR("Jitter"), STR("Zero"), STR("Up") });
+
+					ImGui::Checkbox(STRC("Force off"), &set->force_off);
+					ImGui::Checkbox(STRC("Ignore freestand"), &set->ignore_freestand);
+					ImGui::Checkbox(STRC("Ignore manuals"), &set->ignore_manuals);
+
 					slider_int(STR("Desync"), &set->desync_amount, 0, 100, STR("%d%%"));
 					combo(STR("Align by target"), &set->align_by_target, { STR("Off"), STR("When on screen"), STR("Always") });
-					//ImGui::Checkbox(STRC("Align by target"), &set->align_by_target);
+
 					slider_int(STR("Yaw add"), &set->yaw_add, -180, 180);
+
 					slider_int(STR("Jitter range"), &set->jitter_angle, -90, 90);
-					if (set->jitter_angle > 2)
+					if (set->jitter_angle > 2 || set->jitter_angle < -2)
 						ImGui::Checkbox(STRC("Randomize jitter"), &set->randomize_jitter);
 
-					//ImGui::Checkbox(STRC("Align desync"), &set->align_desync);
+					ImGui::Checkbox(STRC("Align desync"), &set->align_desync);
 					ImGui::Checkbox(STRC("Desync jitter"), &set->desync_jitter);
+
 					ImGui::Checkbox(STRC("Spin"), &set->spin);
+
 					if (set->spin) {
 						slider_int(STR("Spin speed"), &set->spin_speed, 1, 90);
-						slider_int(STR("Spin range"), &set->spin_range, 2, 90);
+						slider_int(STR("Spin range"), &set->spin_range, 2, 360);
 					}
 
 					//ImGui::Checkbox(STRC("Edge yaw on peek"), &set->edge_yaw_on_peek);
@@ -311,14 +328,15 @@ namespace menu {
 			static int chams_tab = 0;
 
 			combo(STR("Chams"), &chams_tab, {
-													STR("Enemy Visible"),
-													STR("Enemy XQZ"),
-													STR("Local player"),
-													STR("Enemy Backtrack"),
-													STR("Shot"),
-													STR("Viewmodel arms"),
-													STR("Viewmodel weapon"),
-													STR("Local attachments"),
+													STRS("Enemy Visible"),
+													STRS("Enemy XQZ"),
+													STRS("Local player"),
+													STRS("Desync model"),
+													STRS("Enemy Backtrack"),
+													STRS("Shot"),
+													STRS("Viewmodel arms"),
+													STRS("Viewmodel weapon"),
+													STRS("Local attachments"),
 											});
 
 			auto& set = settings->player_esp.chams[chams_tab];
@@ -404,6 +422,8 @@ namespace menu {
 			ImGui::Separator();
 
 			ImGui::Checkbox(STRC("Projectiles warning"), &settings->grenade_esp.enable);
+			ImGui::Checkbox(STRC("Projectiles prediction"), &settings->grenade_esp.prediction);
+			ImGui::Checkbox(STRC("Bomb ESP"), &settings->bomb_esp.enable);
 		}
 		end_child();
 
@@ -509,6 +529,10 @@ namespace menu {
 			combo(STR("Agent CT"), &settings->skins.agent_ct, agent_skins);
 
 			combo(STR("Bullet tracer"), &settings->bullets.tracer, { STR("Off"), STR("Line"), STR("Beam") });
+			if (settings->bullets.tracer > 0) {
+
+				ImGui::ColorEdit4(STRC("Tracer color"), settings->bullets.tracer_color.base());
+			}
 
 			ImGui::Checkbox(STRC("Server impacts"), &settings->bullets.server_impacts);
 			if (settings->bullets.server_impacts) {
@@ -531,7 +555,7 @@ namespace menu {
 				slider_int(STR("Impacts size"), &settings->bullets.impacts_size, 1, 30);
 
 			ImGui::Separator();
-
+			multicombo(STR("Hitmarker"), &settings->visuals.hitmarker, { STR("World"), STR("Screen"), STR("Damage") });
 			multicombo(STR("Removals"), &settings->visuals.removals, { STR("Visual recoil"), STR("Smoke"), STR("Flash"), STR("Scope"), STR("Post processing"), STR("Fog"), STR("World shadow"), STR("Foot shadow"), STR("Viewmodel bob") });
 
 			if (settings->visuals.removals.at(3)) {
@@ -553,6 +577,7 @@ namespace menu {
 
 			slider_int(STR("World FOV"), &settings->visuals.world_fov, 0, 50);
 			slider_int(STR("Zoom FOV"), &settings->visuals.zoom_fov, 0, 100, STR("%d%%"));
+			slider_int(STR("Viewmodel FOV"), &settings->visuals.viewmodel_fov, 0, 100, STR("%d%"));
 		}
 		end_child();
 	}
@@ -570,6 +595,7 @@ namespace menu {
 				hotkey(STR("Double-tap"), &hotkeys->doubletap);
 				hotkey(STR("Hide-shot"), &hotkeys->hide_shot);
 				hotkey(STR("Override damage"), &hotkeys->override_damage);
+				//hotkey(STR("Force body"), &hotkeys->force_body);
 			}
 		}
 
@@ -607,6 +633,8 @@ namespace menu {
 	static void misc_tab() {
 		ImGui::Columns(2, nullptr, false);
 
+		const char* config_name[] = { "Config 1", "Config 2", "Config 3", "Config 4" };
+
 		begin_child(STR("Movement"), dpi::scale(200.f));
 		{
 			ImGui::Checkbox(STRC("Bunny-hop"), &settings->movement.bhop);
@@ -616,7 +644,8 @@ namespace menu {
 				slider_int(STR("Strafe smoothness"), &settings->movement.strafe_smooth, 0, 200);
 
 			ImGui::Checkbox(STRC("Fast stop"), &settings->movement.fast_stop);
-			combo(STR("Legs movement"), &settings->movement.leg_movement, { STR("Avoid slide"), STR("Always slide") });
+			combo(STR("Legs movement"), &settings->movement.leg_movement, { STR("Avoid slide"), STR("Always slide")});
+			multicombo(STR("Animation breaker"), &settings->movement.anim_changers, { STR("Visual Lag") });
 
 			ImGui::Spacing();
 			ImGui::Text(STRC("Peek assist"));
@@ -628,16 +657,43 @@ namespace menu {
 		}
 		end_child();
 
+		begin_child(STR("Actions"));
+		{
+			char input_buf[MAX_PATH];
+
+			combo(STRC("Configs"), &settings->configs.config_number, { STR("Config 1"), STR("Config 2"), STR("Config 3"), STR("Config 4") });
+
+			//ImGui::InputText(STRC("Config name "), input_buf, sizeof(input_buf));
+
+			ImGui::Spacing();
+
+			if (ImGui::Button(STRC("Save"), ImVec2{ dpi::scale(56.f), dpi::scale(24.f) })) {
+				settings->save(STR(config_name[settings->configs.config_number]));
+			}
+
+			if (ImGui::Button(STRC("Load"), ImVec2{ dpi::scale(56.f), dpi::scale(24.f) })) {
+				settings->load(STR(config_name[settings->configs.config_number]));
+			}
+		}
+		end_child();
+
 		ImGui::NextColumn();
 
 		begin_child(STR("Other"));
 		{
 			ImGui::Checkbox(STRC("Hit sound"), &settings->misc.hitsound);
-			if (settings->misc.hitsound)
+			if (settings->misc.hitsound) {
+				//combo(STR("Type"), &settings->misc.hitsound_type, { STR("Amethyst"), STR("Sparkle"), STR("Tap"), STR("Flick"), STR("Bepis") });
 				slider_int(STR("Hit sound volume"), &settings->misc.hitsound_volume, 1, 100, STR("%d%%"));
+			}
 
 			ImGui::Checkbox(STRC("Unlock inventory"), &settings->misc.unlock_inventory);
 			ImGui::Checkbox(STRC("Unlock hidden convars"), &settings->misc.unlock_cvars);
+
+			ImGui::Checkbox(STRC("Preverse killfeed"), &settings->misc.preserve_killfeed);
+			ImGui::Checkbox(STRC("Knife-bot"), &settings->misc.knife_bot);
+
+			multicombo(STR("Ragebot logs"), &settings->misc.log_filter, { STR("Aimbot info"), STR("Damage received"), STR("Damage dealt"), STR("Missed shots") });
 
 #ifdef _DEBUG
 			if (ImGui::Button(STRC("Unload"), ImVec2{ dpi::scale(56.f), dpi::scale(24.f) }))
@@ -648,7 +704,7 @@ namespace menu {
 
 			combo(STR("Main weapon"), &settings->misc.autobuy.main, { STR("None"), STR("Auto sniper"), STR("Scout"), STR("AWP"), STR("Negev"), STR("M249"), STR("Rifle"), STR("AUG/SG553") });
 
-			combo(STR("Pistol"), &settings->misc.autobuy.pistol, { STR("None"), STR("Dual berettas"), STR("P250"), STR("CZ75-Auto"), STR("Deagle/Revolver") });
+			combo(STR("Pistol"), &settings->misc.autobuy.pistol, { STR("None"), STR("Dual berettas"), STR("P250"), STR("Five-Seven/Tec-9"), STR("Deagle/Revolver") });
 
 			multicombo(STR("Additional"), &settings->misc.autobuy.additional, {
 																					  STR("Head helmet"),  // 1
@@ -663,33 +719,12 @@ namespace menu {
 		end_child();
 	}
 
-	static void configs_tab() {
-		ImGui::Columns(2, nullptr, false);
-
-		begin_child(STR("Actions"));
-		{
-			if (ImGui::Button(STRC("Save"), ImVec2{ dpi::scale(56.f), dpi::scale(24.f) }))
-				settings->save(STR("settings"));
-
-			if (ImGui::Button(STRC("Load"), ImVec2{ dpi::scale(56.f), dpi::scale(24.f) }))
-				settings->load(STR("settings"));
-		}
-		end_child();
-
-		ImGui::NextColumn();
-
-		begin_child(STR("Config's list"));
-		{
-		}
-		end_child();
-	}
-
 	STFI void render_menu() {
 		for (size_t i = 0; i < tabs_list.size(); ++i) {
 			if (i > 0)
 				ImGui::SameLine();
 
-			if (ImGui::Button(tabs_list[i].c_str(), ImVec2{ dpi::scale(56.f), dpi::scale(24.f) }))
+			if (ImGui::Button(tabs_list[i].c_str(), ImVec2{ dpi::scale(83.f), dpi::scale(24.f) }))
 				current_tab = (e_tabs)i;
 		}
 
@@ -701,8 +736,8 @@ namespace menu {
 			case e_tabs::world: return world_tab();
 			case e_tabs::hotkeys: return hotkeys_tab();
 			case e_tabs::misc: return misc_tab();
-			case e_tabs::configs: return configs_tab();
-			case e_tabs::scripts: return;
+			//case e_tabs::configs: return configs_tab();
+			//case e_tabs::scripts: return;
 			default: return welcome_tab();
 		}
 	}
@@ -719,7 +754,7 @@ namespace menu {
 		ImGui::SetNextWindowPos(ImVec2((screen_size.x - window_size.x) / 2.f, (screen_size.y - window_size.y) / 2.f), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(window_size, ImGuiCond_FirstUseEver);
 		ImGui::SetColorEditOptions(ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueBar);
-		ImGui::Begin(dformat(STRS("CS:GO Internal | Build: {} {}"), STR(__DATE__), STR(__TIME__)).c_str(), &open,
+		ImGui::Begin(dformat(STRS("WEAVE.SU | de0ver | Build: {} {}"), STR(__DATE__), STR(__TIME__)).c_str(), &open,
 					 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize);
 
 		render_menu();

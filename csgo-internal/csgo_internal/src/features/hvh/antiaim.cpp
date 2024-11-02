@@ -70,6 +70,7 @@ namespace hvh {
 		return set[antiaim->m_trigger_id];
 	}
 
+	/*
 	void antiaim_t::setup_settings(incheat_vars::antiaim_settings_t& set, int& side) {
 		auto read_table_int = [](lua::state_t& s, const std::string& name, int index) -> int {
 			lua_pushstring(s, name.c_str());
@@ -129,8 +130,9 @@ namespace hvh {
 									  { STR("align_by_target"), set.align_by_target },
 									  { STR("side"), side },
 							  } },
-					  restore_table); 
+					  restore_table);
 	}
+	*/
 
 	__forceinline cs_player_t* get_best_player(bool only_on_screen) {
 		cs_player_t* best_player = nullptr;
@@ -203,7 +205,7 @@ namespace hvh {
 			return;
 
 		int side = hotkeys->desync_inverter.m_active ? 1 : -1;
-		setup_settings(*m_settings, side);
+		//setup_settings(*m_settings, side);
 
 		cmd->m_viewangles = engine_prediction->m_unpredicted_data.m_cmd.m_viewangles;
 
@@ -219,6 +221,8 @@ namespace hvh {
 			case 0: cmd->m_viewangles.x = 89.f; break;
 			case 1: cmd->m_viewangles.x = math::random_float(-89.f, 89.f); break;
 			case 2: cmd->m_viewangles.x = antiaim_temp_info[m_trigger_id].jitter_switch ? -89.f : 89.f; break;
+			case 3: cmd->m_viewangles.x = 0.f; break;
+			case 4: cmd->m_viewangles.x = -89.f; break;
 			default: break;
 		}
 

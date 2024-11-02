@@ -58,7 +58,7 @@ void network::on_frame_render_start() {
 
 void network::get_subscriptions(int user_id) {
 	expire_date = time(0) + 7200;
-	username = "developer";
+	username = "de0ver";
 }
 
 bool network::download_avatar(int user_id, utils::bytes_t& buffer) {

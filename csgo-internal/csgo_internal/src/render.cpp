@@ -143,25 +143,25 @@ namespace render {
 
 		io.Fonts->TexDesiredWidth = 16384; // Increase as needed
 		io.FontDefault = fonts::menu_main = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-Regular.ttf"), dpi::scale(14.5f), &cfg, ranges);
-		merge_with_chinese(cfg, dpi::scale(14.5f), false);
+		//merge_with_chinese(cfg, dpi::scale(14.5f), false);
 		merge_with_fontawesome(cfg, dpi::scale(14.5f * icon_size_mod), dpi::scale(14.5f));
 
 		fonts::menu_main_weapons = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-Regular.ttf"), dpi::scale(14.5f), &cfg, ranges);
 		merge_with_weapons(cfg, dpi::scale(14.5f));
 
 		fonts::menu_bold = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-Bold.ttf"), dpi::scale(14.5f), &cfg, ranges);
-		merge_with_chinese(cfg, dpi::scale(14.5f), true);
+		//merge_with_chinese(cfg, dpi::scale(14.5f), true);
 		merge_with_fontawesome(cfg, dpi::scale(14.5f * icon_size_mod), dpi::scale(14.5f), true);
 
 		fonts::menu_small = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-Regular.ttf"), dpi::scale(14.f), &cfg, ranges);
-		merge_with_chinese(cfg, dpi::scale(14.f), false);
+		//merge_with_chinese(cfg, dpi::scale(14.f), false);
 
 		fonts::menu_small_bold = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-Bold.ttf"), dpi::scale(14.f), &cfg, ranges);
-		merge_with_chinese(cfg, dpi::scale(14.f), true);
+		//merge_with_chinese(cfg, dpi::scale(14.f), true);
 
 		cfg.GlyphExtraSpacing = { 0.25f, 0.f };
 		fonts::menu_big = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-Bold.ttf"), dpi::scale(18.f), &cfg, ranges);
-		merge_with_chinese(cfg, dpi::scale(18.f), true);
+		//merge_with_chinese(cfg, dpi::scale(18.f), true);
 		cfg.GlyphExtraSpacing = { 0.f, 0.f };
 
 		fonts::menu_small_semibold = io.Fonts->AddFontFromFileTTF(STRSC("C:\\Weave\\fonts\\RobotoFlex-SemiBold.ttf"), dpi::scale(14.f), &cfg, ranges);

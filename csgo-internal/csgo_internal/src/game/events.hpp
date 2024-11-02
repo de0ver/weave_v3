@@ -26,7 +26,6 @@ public:
 
 	void fire_game_event(sdk::game_event_t* e) override {
 		const std::string name = e->get_name();
-		lua::game_event(name, e);
 
 		if (m_events.count(name) != 0) {
 			for (auto& callback: m_events[name])

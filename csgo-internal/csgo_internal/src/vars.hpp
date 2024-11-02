@@ -14,10 +14,9 @@ namespace utils {
 using json_t = nlohmann::json;
 
 class c_imgui_color {
-private:
+public:
 	float m_value[4] = { 1.f, 1.f, 1.f, 1.f };
 
-public:
 	__forceinline c_imgui_color(uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255) {
 		m_value[0] = r / (float)XOR32S(255);
 		m_value[1] = g / (float)XOR32S(255);
@@ -339,11 +338,16 @@ namespace incheat_vars {
 		} misc;
 
 		struct {
+			_VAR_DECL_(types::int_t, config_number);
+		} configs;
+
+		struct {
 			_VAR_DECL_(types::bool_t, bhop);
 			_VAR_DECL_(types::bool_t, autostrafe);
 			_VAR_DECL_(types::int_t, strafe_smooth);
 			_VAR_DECL_(types::bool_t, fast_stop);
 			_VAR_DECL_(types::int_t, leg_movement);
+			_VAR_DECL_(types::flags_t, anim_changers);
 
 			_VAR_DECL_(types::bool_t, peek_assist_retreat_on_key);
 			_VAR_DECL_(types::color_t, peek_assist_colors[2]);
@@ -375,7 +379,7 @@ namespace incheat_vars {
 
 		void init();
 
-		static json_t dump_settings_addr();
+		static json_t dump_settings_add();
 		static void save(std::string_view id);
 		static void load(std::string_view id);
 	};

@@ -1413,6 +1413,7 @@ namespace hvh {
 		ranges::sort(aimbot->m_sorted_indices, [](int i, int j) { return compare_aimbot_data(aimbot->m_data[i], aimbot->m_data[j]); });
 	}
 
+	/*
 	STFI void setup_settings(incheat_vars::ragebot_settings_t& set) {
 		auto read_table_int = [](lua::state_t& s, const std::string& name, int index) -> int {
 			lua_pushstring(s, name.c_str());
@@ -1461,6 +1462,7 @@ namespace hvh {
 							  } },
 					  restore_table);
 	}
+	*/
 
 	void aimbot_t::on_create_move(user_cmd_t* cmd) {
 		aimbot_reset();
@@ -1474,7 +1476,7 @@ namespace hvh {
 		if (!m_settings.has_value())
 			return;
 
-		setup_settings(*m_settings);
+		//setup_settings(*m_settings);
 
 		// if we have a valid settings let's run the aimbot
 		if (aimbot_begin()) {
