@@ -58,13 +58,14 @@ namespace incheat_vars {
 				}
 				case json_t::value_t::object:
 					auto color_ptr = settings->find_color(var.key());
+
 					if (color_ptr != nullptr) {
 						for (auto clr = var->begin(); clr != var->end(); ++clr) {
 							switch (fnva1(clr.key().c_str())) {
-								case HASH("r"): color_ptr->get().r() = clr->get<uint8_t>(); break;
-								case HASH("g"): color_ptr->get().g() = clr->get<uint8_t>(); break;
-								case HASH("b"): color_ptr->get().b() = clr->get<uint8_t>(); break;
-								case HASH("a"): color_ptr->get().a() = clr->get<uint8_t>(); break;
+								case HASH("r"): color_ptr->m_value[0] = clr->get<float>() / 255.f; break;
+								case HASH("g"): color_ptr->m_value[1] = clr->get<float>() / 255.f; break;
+								case HASH("b"): color_ptr->m_value[2] = clr->get<float>() / 255.f; break;
+								case HASH("a"): color_ptr->m_value[3] = clr->get<float>() / 255.f; break;
 							}
 						}
 					} else {
